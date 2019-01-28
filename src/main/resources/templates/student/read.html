@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" ng-app="myApp" ng-controller="myCtrl">
+<head>
+    <meta charset="utf-8">
+    <base href="http://localhost"/>
+    <title>在线阅读</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/angular.js/1.6.3/angular.min.js"></script>
+
+</head>
+
+<script th:inline="javascript">
+    function getBookID() {
+        /*<![CDATA[*/
+        var bookID = /*[[${id}]]*/
+        return bookID;
+        /*]]>*/
+    }
+</script>
+<body>
+
+    <h2>这是一个{{type}}阅读器</h2>
+
+    <script>
+        var app = angular.module('myApp', []);
+        app.controller('myCtrl', function($scope){
+            $.ajax({
+                async: false,
+                cache: false,
+                type: 'GET',
+                url:"http://localhost:8080/book/"+getBookID(),
+
+                error: function() {
+                    alert('获得列表请求失败');
+                },
+                success: function(data) {
+                    var book = JSON.parse(data["data"]);
+                    $scope.type = book.eBookType;
+
+                }
+            });
+        })
+    </script>
+</body>
+</html>

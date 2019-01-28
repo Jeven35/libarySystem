@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员登录</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+        .form-signln
+        {
+            max-width: 330px;
+            padding: 15px;
+            margin: 0 auto;
+        }
+        input{
+            margin-bottom: 3px;
+        }
+        .btn-signln
+        {
+            max-width: 300px;
+            padding: 15px;
+            margin: 0 auto;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <form class="form-signln" role="form">
+        <h1 class="form-signln-heading">管理员登录</h1>
+
+        <input type="email" class="form-control" placeholder="email" id = "email">
+        <br>
+        <input type="password" class="form-control" placeholder="password" id="password">
+        <br>
+        <label class="check-box">
+            <input type="checkbox" value="remember-me">阅读用户协议
+        </label>
+        <br>
+
+    </form>
+    <button class="btn btn-primary btn-block btn-signln" type="submit" onclick="login()">登录</button>
+
+</div>
+
+<script>
+    var login = function () {
+        var email = $("#email").val();
+        var password = $("#password").val();
+        var data = {
+            email: email,
+            password: password
+        }
+        $.ajax({
+            url:"http://localhost:8080/user/auth/admin",
+            type:"post",
+            data: data,
+            success:function(data){
+                if (data["success"] == "true"){
+                    alert("登录成功！")
+                    window.location.href = "adminBook";
+                }
+                else{
+                    alert("登录失败！");
+                }
+            },
+            error:function(e){
+                alert("连接错误！！");
+            }
+        });
+    }
+</script>
+</body>
+</html>

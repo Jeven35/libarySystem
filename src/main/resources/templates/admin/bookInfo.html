@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" ng-app="myApp" ng-controller="myCtrl">
+<head>
+    <meta charset="UTF-8">
+    <title>图书信息</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/angular.js/1.6.3/angular.min.js"></script>
+</head>
+<script th:inline="javascript">
+    function getUserID() {
+        /*<![CDATA[*/
+        var userID = /*[[${id}]]*/
+        return userID;
+        /*]]>*/
+    }
+
+</script>
+
+
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="adminBook">&ensp;图书管理</a>
+        </div>
+        <div>
+            <a class="navbar-brand" href="#">&ensp;&ensp;&ensp;&ensp;</a>
+        </div>
+        <div class="navbar-header">
+            <a class="navbar-brand" href="adminUser">用户管理</a>
+        </div>
+
+        <div>
+            <a class="navbar-brand" href="#">&ensp;&ensp;&ensp;&ensp;</a>
+        </div>
+
+    </div>
+</nav>
+<body>
+
+<h2>编辑图书信息</h2>
+<br>
+<label>名称:</label>
+<input type="text" value="{{name}}" id = "name">
+<br>
+<label>目录:</label>
+<input type="text" value="{{category}}" id = "category">
+<br>
+<label>类型:</label>
+<input type="text" value="{{eBookType}}" id = "eBookType">
+<br>
+<label>eBookUrl:</label>
+<input type="text" value="{{eBookUrl}}" id = "eBookUrl">
+<br>
+<label>简要描述:</label>
+<input type="text" value="{{description}}" id = "description">
+<br>
+<label>借书费用:</label>
+<input type="text" value="{{penaltyPerDay}}" id = "penaltyPerDay">
+<br>
+<button ng-click="update()">确认修改</button>
+<script>
+    var app = angular.module('myApp', []);
+    app.controller('myCtrl', function($scope) {
+        $.ajax({
+            async: false,
+            cache: false,
+            type: 'GET',
+            url:"http://localhost:8080/book/"+getUserID(),
+
+            error: function() {
+                alert('获得用户信息连接失败！');
+            },
+            success: function(data) {
+                var book = JSON.parse(data["data"]);
+                console.log(book);
+                $scope.name = book.name;
+                $scope.category = book.category.name;
+                $scope.eBookType = book.eBookType;
+                $scope.eBookUrl = book.eBookUrl;
+                $scope.description = book.description;
+                $scope.penaltyPerDay = book.penaltyPerDay;
+                // $scope.update = function () {
+                //     user.email = $("#email").val();
+                //     user.nickname = $("#nickname").val();
+                //     user.password = $("#password").val();
+                //     user.department = $("#department").val();
+                //     user.phoneNumber = $("#phoneNumber").val();
+                //     user.strategy.name = $("#strategy").val();
+                //     user.role.name = $("#role").val();
+                //     var jsonText = JSON.stringify(user);
+                //     console.log(jsonText);
+                //     $.ajax({
+                //         async: false,
+                //         cache: false,
+                //         type: 'put',
+                //         data:jsonText,
+                //         url:"http://localhost:8080/user/"+getUserID(),
+                //         error: function() {
+                //             alert('修改信息连接失败！');
+                //         },
+                //         success:function (data) {
+                //             if (data["success"]){
+                //                 alert("修改成功！");
+                //                 window.location.href = "/toUserInfo/"+ID;
+                //             }
+                //             else{
+                //                 alert("修改失败！");
+                //             }
+                //         }
+                //     })
+                // }
+
+            }
+        });
+    });
+</script>
+</body>
+</html>

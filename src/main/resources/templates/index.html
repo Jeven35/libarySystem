@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+<br>
+<h2> &ensp;这是主页</h2>
+<br>
+<br>
+<p class="lead"> &ensp;这个贼炫酷的界面是主页</p>
+<p class="lead"> &ensp;点击下面的按钮进入网站</p>
+<br>
+<br>
+
+<body>
+&ensp;&ensp;<button class="btn btn-success" onclick="toLogin(2)">点我进入管理员界面</button>
+<br/>
+<br/>
+
+&ensp;&ensp;<button class="btn btn-success" onclick="toLogin(1)">点我进入学生/教师界面</button>
+
+<script>
+    var toLogin = function (index) {
+        if (index == 1){
+            window.location.href = "UserLogin";
+        }
+        else if(index == 2){
+            window.location.href = "AdminLogin";
+        }
+    }
+</script>
+</body>
+</html>

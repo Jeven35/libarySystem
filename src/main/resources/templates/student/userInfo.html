@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" ng-app="myApp" ng-controller="myCtrl">
+<head>
+    <meta charset="UTF-8">
+    <base href="http://localhost"/>
+    <title>个人信息</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/angular.js/1.6.3/angular.min.js"></script>
+</head>
+<script th:inline="javascript">
+    function getUserID() {
+        /*<![CDATA[*/
+        var userID = /*[[${id}]]*/
+        return userID;
+        /*]]>*/
+    }
+    var bookUrl = "bookCenter/"+getUserID();
+    var userUrl = "userCenter/"+getUserID();
+</script>
+
+<body>
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href={{bookUrl}}>&ensp;借阅图书</a>
+        </div>
+        <div>
+            <a class="navbar-brand" href="">&ensp;&ensp;&ensp;&ensp;</a>
+        </div>
+        <div class="navbar-header">
+            <a class="navbar-brand" href={{userUrl}}>个人信息管理</a>
+        </div>
+
+        <div>
+            <a class="navbar-brand" href="">&ensp;&ensp;&ensp;&ensp;</a>
+        </div>
+
+        <div>
+            <form class="navbar-form navbar-left" role="search" >
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search">
+                </div>
+                <button type="submit" class="btn btn-default">搜索图书</button>
+            </form>
+        </div>
+    </div>
+</nav>
+<h2>修改该用户信息</h2>
+<br>
+<label>邮箱:</label>
+<input type="text" value="{{email}}" id = "email">
+<br>
+<label>密码:</label>
+<input type="text" value="{{password}}" id = "password">
+<br>
+<label>昵称:</label>
+<input type="text" value="{{nickname}}" id = "nickname">
+<br>
+<label>电话:</label>
+<input type="text" value="{{phoneNumber}}" id = "phoneNumber">
+<br>
+<label>角色:</label>
+<input type="text" value="{{role}}" id = "role">
+<br>
+<label>权限:</label>
+<input type="text" value="{{strategy}}" id = "strategy">
+<br>
+<label>院系:</label>
+<input type="text" value="{{department}}" id = "department">
+<br>
+<br>
+<br>
+<label>借书情况:</label>
+<div>
+    <table  class="table table-hover">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>书名</th>
+            <th>借书时间</th>
+            <th>借阅截止时间</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr ng-repeat="x in books">
+            <td>{{ x.id }}</td>
+            <td>{{ x.book.name}}</td>
+            <td>{{ x.start.year }}.{{x.start.month}}.{{x.start.dayOfMonth}}</td>
+            <td>{{ x.end.year }}.{{x.end.month}}.{{x.end.dayOfMonth}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<button ng-click="update()">确认修改</button>
+<script>
+    var app = angular.module('myApp', []);
+    app.controller('myCtrl', function($scope) {
+        $.ajax({
+            async: false,
+            cache: false,
+            type: 'GET',
+            url:"http://localhost:8080/user/"+getUserID(),
+
+            error: function() {
+                alert('获得用户信息连接失败！');
+            },
+            success: function(data) {
+                var user = JSON.parse(data["data"]);
+                console.log(user);
+                $scope.email = user.email;
+                $scope.nickname = user.nickname;
+                $scope.password = user.password;
+                $scope.department = user.department;
+                $scope.phoneNumber = user.phoneNumber;
+                $scope.strategy = user.strategy.name;
+                $scope.role = user.role.name;
+                $scope.books = user.strategy.contracts;
+                $scope.bookUrl = bookUrl;
+                $scope.userUrl = userUrl;
+
+                $scope.update = function () {
+                    user.email = $("#email").val();
+                    user.nickname = $("#nickname").val();
+                    user.password = $("#password").val();
+                    user.department = $("#department").val();
+                    user.phoneNumber = $("#phoneNumber").val();
+                    user.strategy.name = $("#strategy").val();
+                    user.role.name = $("#role").val();
+                    var jsonText = JSON.stringify(user);
+                    console.log(jsonText);
+                    $.ajax({
+                        async: false,
+                        cache: false,
+                        type: 'put',
+                        data:jsonText,
+                        url:"http://localhost:8080/user/"+getUserID(),
+                        error: function() {
+                            alert('修改信息连接失败！');
+                        },
+                        success:function (data) {
+                            if (data["success"]){
+                                alert("修改成功！");
+                                window.location.href = "/toUserInfo/"+ID;
+                            }
+                            else{
+                                alert("修改失败！");
+                            }
+                        }
+                    })
+                }
+
+            }
+        });
+    });
+</script>
+</body>
+</html>

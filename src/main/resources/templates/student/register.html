@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+        .form-signln
+        {
+            max-width: 330px;
+            padding: 15px;
+            margin: 0 auto;
+        }
+        .btn-signln
+        {
+            max-width: 300px;
+            padding: 15px;
+            margin: 0 auto;
+        }
+        input{
+            margin-bottom: 3px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <form class="form-signln" role="form">
+        <h2 class="form-signln-heading">这里是用户注册</h2>
+        <br>
+
+        <label>请选择你要注册的角色</label>
+        <div class="radio">
+            <label>
+                <input type="radio" name="optionsRadios" id="optionsRadios1"
+                       value="Student" checked>学生
+            </label>
+        </div>
+        <div class="radio">
+            <label>
+                <input type="radio" name="optionsRadios" id="optionsRadios2"
+                       value="Teacher">
+                教师
+            </label>
+        </div>
+
+        <br>
+        <label>请选择你要注册角色的权限</label>
+        <div class="radio">
+            <label>
+                <input type="radio" name="optionsRadios1" id="optionsRadios3"
+                       value="Student strategy" checked>学生权限
+            </label>
+        </div>
+        <div class="radio">
+            <label>
+                <input type="radio" name="optionsRadios1" id="optionsRadios4"
+                       value="Teacher strategy">
+                教师权限
+            </label>
+        </div>
+
+        <br>
+        <input type="email" class="form-control" placeholder="请输入你的邮箱" required id="name">
+        <br>
+        <input type="password" class="form-control" placeholder="请设置密码" required id="password1">
+        <br>
+        <input type="password" class="form-control" placeholder="请确认密码" required id="password2">
+        <br>
+
+        <label class="check-box">
+            <input type="checkbox" value="remember-me">阅读用户协议
+        </label>
+    </form>
+    <button class="btn btn-primary btn-block btn-signln" type="submit" onclick="rigister()">确认注册</button>
+
+    <script>
+        var rigister = function () {
+            var name = $("#name").val();
+            var password1 = $("#password1").val();
+            var password2 = $("#password2").val();
+            var value1,value2;
+            if (password1 != password2){
+                alert("请确认密码");
+            }
+            else{
+                var radio1 = document.getElementsByName("optionsRadios");
+                for (var i=0; i<radio1.length; i++) {
+                    if (radio1[i].checked) {
+                        value1 = radio1[i].value;
+                    }
+                }
+                var radio2 = document.getElementsByName("optionsRadios1");
+                for (var i=0; i<radio2.length; i++) {
+                    if (radio2[i].checked) {
+                        value2 = radio2[i].value;
+                    }
+                }
+                var data = {
+                    email:name,
+                    password:password1,
+                    role:value1,
+                    strategy:value2
+                };
+                $.ajax({
+                    url:"http://localhost:8080/user",
+                    type:"post",
+                    data: data,
+                    success:function(data){
+                        if (data["success"]){
+                            alert("注册成功！")
+                            window.location.href = "UserLogin";
+                        }
+                        else{
+                            alert("注册失败！");
+                        }
+                    },
+                    error:function(e){
+                        alert("连接错误！！");
+                    }
+                });
+
+
+            }
+        }
+    </script>
+</div>
+</body>
+</html>

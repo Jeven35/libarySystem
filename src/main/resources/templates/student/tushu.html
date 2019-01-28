@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" ng-app="myApp" ng-controller="myCtrl">
+<head>
+    <meta charset="utf-8">
+    <base href="http://localhost"/>
+    <title>图书借阅</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/angular.js/1.6.3/angular.min.js"></script>
+
+</head>
+
+<script th:inline="javascript">
+    function getUserID() {
+        /*<![CDATA[*/
+        var userID = /*[[${id}]]*/
+        return userID;
+        /*]]>*/
+    }
+
+    var bookUrl = "bookCenter/"+getUserID();
+    var userUrl = "userCenter/"+getUserID();
+</script>
+
+<body>
+
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href={{bookUrl}}>&ensp;借阅图书</a>
+        </div>
+        <div>
+            <a class="navbar-brand" href="">&ensp;&ensp;&ensp;&ensp;</a>
+        </div>
+        <div class="navbar-header">
+            <a class="navbar-brand" href={{userUrl}}>个人信息管理</a>
+        </div>
+
+        <div>
+            <a class="navbar-brand" href="">&ensp;&ensp;&ensp;&ensp;</a>
+        </div>
+
+        <div>
+            <form class="navbar-form navbar-left" role="search" >
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search">
+                </div>
+                <button type="submit" class="btn btn-default">搜索图书</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+
+<h2>图书列表</h2>
+<br>
+<div ng-app="myApp" ng-controller="myCtrl">
+    <table  class="table table-hover">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>name</th>
+            <th>category</th>
+            <th>eBookType</th>
+            <th>eBookUrl</th>
+            <th>description</th>
+            <th>penaltyPerDay</th>
+            <th><button class="btn btn-link"></button></th>
+            <th><button class="btn btn-link"></button></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr ng-repeat="x in names">
+            <td>{{ x.id}}</td>
+            <td>{{ x.name }}</td>
+            <td>{{ x.category.name }}</td>
+            <td>{{ x.eBookType }}</td>
+            <td>{{ x.eBookUrl }}</td>
+            <td>{{ x.description }}</td>
+            <td>{{ x.penaltyPerDay }}</td>
+            <td><button class="btn btn-link" ng-click = read($index) >在线阅读</button></td>
+            <td><button class="btn btn-link" ng-click = borrow($index) >借阅图书</button></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    var app = angular.module('myApp', []);
+    app.controller('myCtrl', function($scope){
+        $.ajax({
+            async: false,
+            cache: false,
+            type: 'GET',
+            url:"http://localhost:8080/book/",
+
+            error: function() {
+                alert('获得列表请求失败');
+            },
+            success: function(data) {
+                var books = JSON.parse(data["data"]);
+                $scope.names = books; //由JSON字符串转换为JSON对象data["data"];
+                $scope.read = function (index) {
+                    var ID = books[index].id;
+                    window.location.href = "/readBook/"+ID;
+                };
+                $scope.borrow = function (index) {
+                    var ID = books[index].id;
+                    var data = {
+                        bookId:ID
+                    }
+                    $.ajax({
+                        async: false,
+                        cache: false,
+                        data:data,
+                        type: 'POST',
+                        url:"http://localhost:8080/user/"+getUserID()+"/borrow",
+                        error: function() {
+                            alert('连接失败');
+                        },
+                        success: function(data){
+                            console.log(data);
+                        }
+                    })
+                }
+            }
+        });
+        $scope.bookUrl = bookUrl;
+        $scope.userUrl = userUrl;
+    })
+</script>
+</body>
+</html>
