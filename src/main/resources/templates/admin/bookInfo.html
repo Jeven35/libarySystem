@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>图书信息</title>
+    <base href="http://localhost"/>
+
+    <meta http-equiv="Access-Control-Allow-Origin" content="*" />
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdn.staticfile.org/angular.js/1.6.3/angular.min.js"></script>
 </head>
 <script th:inline="javascript">
-    function getUserID() {
+    function getBookID() {
         /*<![CDATA[*/
         var userID = /*[[${id}]]*/
         return userID;
@@ -67,7 +70,7 @@
             async: false,
             cache: false,
             type: 'GET',
-            url:"http://localhost:8080/book/"+getUserID(),
+            url:"http://localhost:8080/book/"+getBookID(),
 
             error: function() {
                 alert('获得用户信息连接失败！');
@@ -77,40 +80,39 @@
                 console.log(book);
                 $scope.name = book.name;
                 $scope.category = book.category.name;
-                $scope.eBookType = book.eBookType;
-                $scope.eBookUrl = book.eBookUrl;
+                $scope.eBookType = book.ebookType;
+                $scope.eBookUrl = book.ebookUrl;
                 $scope.description = book.description;
                 $scope.penaltyPerDay = book.penaltyPerDay;
-                // $scope.update = function () {
-                //     user.email = $("#email").val();
-                //     user.nickname = $("#nickname").val();
-                //     user.password = $("#password").val();
-                //     user.department = $("#department").val();
-                //     user.phoneNumber = $("#phoneNumber").val();
-                //     user.strategy.name = $("#strategy").val();
-                //     user.role.name = $("#role").val();
-                //     var jsonText = JSON.stringify(user);
-                //     console.log(jsonText);
-                //     $.ajax({
-                //         async: false,
-                //         cache: false,
-                //         type: 'put',
-                //         data:jsonText,
-                //         url:"http://localhost:8080/user/"+getUserID(),
-                //         error: function() {
-                //             alert('修改信息连接失败！');
-                //         },
-                //         success:function (data) {
-                //             if (data["success"]){
-                //                 alert("修改成功！");
-                //                 window.location.href = "/toUserInfo/"+ID;
-                //             }
-                //             else{
-                //                 alert("修改失败！");
-                //             }
-                //         }
-                //     })
-                // }
+                $scope.update = function () {
+                    book.name = $("#name").val();
+                    book.category.name = $("#category").val();
+                    book.ebookType = $("#eBookType").val();
+                    book.ebookUrl = $("#eBookUrl").val();
+                    book.description = $("#description").val();
+                    book.penaltyPerDay = $("#penaltyPerDay").val();
+                    console.log(book.eBookType,book.eBookUrl);
+                    var jsonText = JSON.stringify(book);
+                    console.log(jsonText);
+                    var settings = {
+                        "async": true,
+                        "crossDomain": true,
+                        "url": "http://localhost:8080/book/"+getBookID(),
+                        "method": "PUT",
+                        "headers": {
+                            "Content-Type": "application/json",
+                            "cache-control": "no-cache",
+                        },
+                        "processData": false,
+                        "data":jsonText
+                    }
+
+                    $.ajax(settings).done(function (response) {
+                        if(response["success"] == "true"){
+                            alert("修改成功！");
+                        }
+                    });
+                }
 
             }
         });

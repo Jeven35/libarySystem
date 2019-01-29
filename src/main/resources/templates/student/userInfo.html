@@ -40,14 +40,14 @@
         <div>
             <form class="navbar-form navbar-left" role="search" >
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search">
+                    <input type="text" class="form-control" placeholder="Search" id="searchBook">
                 </div>
-                <button type="submit" class="btn btn-default">搜索图书</button>
+                <button  class="btn btn-default" onclick="tobookInfo()">搜索图书</button>
             </form>
         </div>
     </div>
 </nav>
-<h2>修改该用户信息</h2>
+<h2>个人信息如下：</h2>
 <br>
 <label>邮箱:</label>
 <input type="text" value="{{email}}" id = "email">
@@ -122,28 +122,29 @@
                 $scope.userUrl = userUrl;
 
                 $scope.update = function () {
-                    user.email = $("#email").val();
-                    user.nickname = $("#nickname").val();
-                    user.password = $("#password").val();
-                    user.department = $("#department").val();
-                    user.phoneNumber = $("#phoneNumber").val();
-                    user.strategy.name = $("#strategy").val();
-                    user.role.name = $("#role").val();
-                    var jsonText = JSON.stringify(user);
-                    console.log(jsonText);
+                   var nickname = $("#nickname").val();
+                    var password = $("#password").val();
+                    var department = $("#department").val();
+                    var phoneNumber = $("#phoneNumber").val();
+                    var ans = {
+                        password:password,
+                        department:department,
+                        nickname:nickname,
+                        phone_number:phoneNumber
+                    };
                     $.ajax({
                         async: false,
                         cache: false,
-                        type: 'put',
-                        data:jsonText,
+                        type: 'post',
+                        data:ans,
                         url:"http://localhost:8080/user/"+getUserID(),
                         error: function() {
                             alert('修改信息连接失败！');
                         },
                         success:function (data) {
-                            if (data["success"]){
+                            if (data["success"] == "true"){
                                 alert("修改成功！");
-                                window.location.href = "/toUserInfo/"+ID;
+                                window.location.href = "/userCenter/"+getUserID();
                             }
                             else{
                                 alert("修改失败！");
@@ -155,6 +156,33 @@
             }
         });
     });
+
+    var tobookInfo = function () {
+        var value = $("#searchBook").val();
+        var data = {
+            name:value
+        };
+        $.ajax({
+            async: false,
+            cache: false,
+            data: data,
+            type: 'GET',
+            url:"http://localhost:8080/book/name",
+
+            error: function() {
+                alert('获得列表请求失败');
+            },
+            success: function(data) {
+                if(data["success"] == "true"){
+                    var book = JSON.parse(data["data"]);
+                    alert("这本书的ID是"+book.id+",这本书的URl是"+book.ebookUrl+"");
+                }
+                else{
+                    alert("所搜索书籍不存在");
+                }
+            }
+        });
+    }
 </script>
 </body>
 </html>

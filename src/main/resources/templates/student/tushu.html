@@ -44,9 +44,9 @@
         <div>
             <form class="navbar-form navbar-left" role="search" >
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search">
+                    <input type="text" class="form-control" placeholder="Search" id="searchBook">
                 </div>
-                <button type="submit" class="btn btn-default">搜索图书</button>
+                <button  class="btn btn-default" onclick="tobookInfo()">搜索图书</button>
             </form>
         </div>
     </div>
@@ -76,8 +76,8 @@
             <td>{{ x.id}}</td>
             <td>{{ x.name }}</td>
             <td>{{ x.category.name }}</td>
-            <td>{{ x.eBookType }}</td>
-            <td>{{ x.eBookUrl }}</td>
+            <td>{{ x.ebookType }}</td>
+            <td>{{ x.ebookUrl }}</td>
             <td>{{ x.description }}</td>
             <td>{{ x.penaltyPerDay }}</td>
             <td><button class="btn btn-link" ng-click = read($index) >在线阅读</button></td>
@@ -122,6 +122,13 @@
                         },
                         success: function(data){
                             console.log(data);
+                            if (data["success"] == "true"){
+                                alert("借阅成功！")
+                            }
+                            else{
+                                alert("借阅失败！");
+                            }
+
                         }
                     })
                 }
@@ -130,6 +137,33 @@
         $scope.bookUrl = bookUrl;
         $scope.userUrl = userUrl;
     })
+    
+    var tobookInfo = function () {
+        var value = $("#searchBook").val();
+        var data = {
+            name:value
+        };
+        $.ajax({
+            async: false,
+            cache: false,
+            data: data,
+            type: 'GET',
+            url:"http://localhost:8080/book/name",
+
+            error: function() {
+                alert('获得列表请求失败');
+            },
+            success: function(data) {
+                if(data["success"] == "true"){
+                    var book = JSON.parse(data["data"]);
+                    alert("这本书的ID是"+book.id+",这本书的URl是"+book.ebookUrl+"");
+                }
+                else{
+                    alert("所搜索书籍不存在");
+                }
+            }
+        });
+    }
 </script>
 </body>
 </html>
